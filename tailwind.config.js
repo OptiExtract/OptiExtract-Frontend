@@ -7,6 +7,10 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        lexend: ['Lexend Deca', 'sans-serif'],
+      }, // ← FIXED COMMA HERE
+
       colors: {
         accent: {
           dark: "var(--accent-dark)",
@@ -23,6 +27,7 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+
       backgroundImage: {
         "accent-gradient":
           "linear-gradient(to bottom right, var(--accent-dark), #101828)",
