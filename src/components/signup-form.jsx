@@ -1,137 +1,213 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import Button from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
+
+const COUNTRY_CODES = {
+  IN: "+91",
+  US: "+1",
+  GB: "+44",
+  AU: "+61",
+  JP: "+81",
+  AE: "+971",
+  DE: "+49",
+  FR: "+33",
+  SG: "+65",
+  CA: "+1",
+};
 
 export default function SignupForm() {
   const [name, setName] = useState("");
+  const [company, setCompany] = useState("");
+  const [phone, setPhone] = useState("");
+  const [countryCode, setCountryCode] = useState("+91");
   const [email, setEmail] = useState("");
+
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
 
-  const valid =
-    name.trim().length >= 2 &&
-    email.includes("@") &&
-    password.length >= 8 &&
-    password === confirm;
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
-  async function onSubmit(e) {
+  const passwordsMatch = password && confirm && password === confirm;
+  const emailValid = email.includes("@") && email.includes(".");
+  const phoneValid = phone.length >= 10;
+
+  const formValid =
+    name.trim().length > 2 &&
+    company.trim().length > 2 &&
+    phoneValid &&
+    emailValid &&
+    password.length >= 6 &&
+    passwordsMatch;
+
+  // Auto detect country code
+  useEffect(() => {
+    async function detectCountry() {
+      try {
+        const res = await fetch("https://ipapi.co/json/");
+        const data = await res.json();
+        const country = data.country;
+
+        if (COUNTRY_CODES[country]) {
+          setCountryCode(COUNTRY_CODES[country]);
+        }
+      } catch (err) {
+        console.log("Location detection failed:", err);
+      }
+    }
+    detectCountry();
+  }, []);
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setError("");
-
-    if (!valid) {
-      setError("Please fill in all fields and make sure passwords match.");
-      return;
-    }
-
-    setSubmitting(true);
-
-    try {
-      await new Promise((res) => setTimeout(res, 800)); // Fake API delay
-    } catch (err) {
-      setError("Signup failed. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
-  }
+    if (!formValid) return;
+    alert("Account created successfully!");
+  };
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5 font-lexend">
+    <form onSubmit={handleSubmit} className="space-y-5 font-lexend">
 
       {/* Full Name */}
       <div>
-        <Label htmlFor="name" className="text-gray-800 font-medium">
-          Full Name
-        </Label>
+        <Label>Full Name</Label>
         <Input
-          id="name"
+          type="text"
           placeholder="John Doe"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="mt-1 border-gray-300 focus:ring-[#A855F7]"
           required
         />
+      </div>
+
+      {/* Company Name */}
+      <div>
+        <Label>Company Name</Label>
+        <Input
+          type="text"
+          placeholder="Company Name"
+          value={company}
+          onChange={(e) => setCompany(e.target.value)}
+          required
+        />
+      </div>
+
+      {/* Phone Number */}
+      <div>
+        <Label>Phone Number</Label>
+        <div className="flex items-center space-x-2">
+          {/* Country Code */}
+          <select
+            value={countryCode}
+            onChange={(e) => setCountryCode(e.target.value)}
+            className="border border-gray-300 rounded-md px-3 py-2 bg-white focus:ring-[#A855F7] focus:outline-none"
+          >
+            {Object.entries(COUNTRY_CODES).map(([country, code]) => (
+              <option key={country} value={code}>
+                {country} {code}
+              </option>
+            ))}
+          </select>
+
+          {/* Phone Input */}
+          <Input
+            type="tel"
+            placeholder="1234567890"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
+            className="border-gray-300 focus:ring-[#A855F7] flex-1"
+          />
+        </div>
+
+        {!phoneValid && phone.length > 0 && (
+          <p className="text-red-600 text-xs mt-1">Enter a valid phone number</p>
+        )}
       </div>
 
       {/* Email */}
       <div>
-        <Label htmlFor="email" className="text-gray-800 font-medium">
-          Email
-        </Label>
+        <Label>Email</Label>
         <Input
-          id="email"
           type="email"
-          placeholder="m@example.com"
+          placeholder="you@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 border-gray-300 focus:ring-[#A855F7]"
           required
         />
-        <p className="text-xs text-gray-500 mt-1">
-          We'll use this to contact you. We will not share your email with anyone else.
-        </p>
+
+        {!emailValid && email.length > 0 && (
+          <p className="text-red-600 text-xs mt-1">
+            Enter a valid email address.
+          </p>
+        )}
       </div>
 
       {/* Password */}
       <div>
-        <Label htmlFor="password" className="text-gray-800 font-medium">
-          Password
-        </Label>
-        <Input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 border-gray-300 focus:ring-[#A855F7]"
-          required
-          minLength={8}
-        />
-        <p className="text-xs text-gray-500 mt-1">
-          Must be at least 8 characters long.
-        </p>
+        <Label>Password</Label>
+        <div className="relative">
+          <Input
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            minLength={6}
+            required
+            className="pr-10"
+          />
+
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-3 text-gray-600"
+          >
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        </div>
       </div>
 
       {/* Confirm Password */}
       <div>
-        <Label htmlFor="confirm" className="text-gray-800 font-medium">
-          Confirm Password
-        </Label>
-        <Input
-          id="confirm"
-          type="password"
-          value={confirm}
-          onChange={(e) => setConfirm(e.target.value)}
-          className="mt-1 border-gray-300 focus:ring-[#A855F7]"
-          required
-        />
-        <p className="text-xs text-gray-500 mt-1">
-          Please confirm your password.
-        </p>
+        <Label>Confirm Password</Label>
+        <div className="relative">
+          <Input
+            type={showConfirm ? "text" : "password"}
+            placeholder="Confirm Password"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            minLength={6}
+            required
+            className="pr-10"
+          />
+
+          <button
+            type="button"
+            onClick={() => setShowConfirm(!showConfirm)}
+            className="absolute right-3 top-3 text-gray-600"
+          >
+            {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        </div>
+
+        {confirm.length > 0 && (
+          <p
+            className={`text-xs mt-1 ${
+              passwordsMatch ? "text-green-600" : "text-red-600"
+            }`}
+          >
+            {passwordsMatch ? "Passwords match ✓" : "Passwords do not match"}
+          </p>
+        )}
       </div>
 
-      {/* Error */}
-      {error && <p className="text-xs text-red-600">{error}</p>}
-
-      {/* Create Account Button (Purple + Black text) */}
-      <Button
+      {/* Submit Button */}
+      <button
         type="submit"
-        disabled={!valid || submitting}
-        className="w-full bg-[#A855F7] text-black hover:bg-[#9333EA] py-2 rounded-lg disabled:opacity-60"
-      >
-        {submitting ? "Creating account…" : "Create Account"}
-      </Button>
-
-      {/* Login Link */}
-      <div className="text-center text-sm text-neutral-600">
-        Already have an account?{" "}
-        <Link to="/auth/login" className="text-[#A855F7] hover:underline">
-          Login
-        </Link>
-      </div>
-
+        disabled={!formValid}
+        className="w-full py-2 bg-[#A855F7] text-white rounded-lg hover:bg-[#9333EA] transition-all">
+        Create Account
+      </button>
     </form>
   );
 }
