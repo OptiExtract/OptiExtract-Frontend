@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
@@ -22,24 +23,14 @@ export default function SignupForm() {
   const [phone, setPhone] = useState("");
   const [countryCode, setCountryCode] = useState("+91");
   const [email, setEmail] = useState("");
-
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const passwordsMatch = password && confirm && password === confirm;
-  const emailValid = email.includes("@") && email.includes(".");
-  const phoneValid = phone.length >= 10;
-
-  const formValid =
-    name.trim().length > 2 &&
-    company.trim().length > 2 &&
-    phoneValid &&
-    emailValid &&
-    password.length >= 6 &&
-    passwordsMatch;
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // Auto detect country code
   useEffect(() => {
@@ -59,10 +50,54 @@ export default function SignupForm() {
     detectCountry();
   }, []);
 
-  const handleSubmit = (e) => {
+  // Validations
+  const passwordsMatch = password && confirm && password === confirm;
+  const emailValid = email.includes("@") && email.includes(".");
+  const phoneValid = phone.length >= 10;
+
+  const formValid =
+    name.trim().length > 2 &&
+    company.trim().length > 2 &&
+    emailValid &&
+    phoneValid &&
+    password.length >= 6 &&
+    passwordsMatch;
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formValid) return;
-    alert("Account created successfully!");
+    setError("");
+
+    if (!formValid) {
+      setError("Please fix the highlighted fields.");
+      return;
+    }
+
+    const payload = {
+      name,
+      email,
+      password,
+      company_name: company,
+      phone_number: `${countryCode}${phone}`,
+    };
+
+    try {
+      setLoading(true);
+
+      const res = await axios.post(
+        "http://localhost:8000/api/v1/auth/register",
+        payload,
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      console.log("Signup success:", res.data);
+      alert("Account created successfully!");
+
+    } catch (err) {
+      console.error(err);
+      setError("Signup failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -85,7 +120,7 @@ export default function SignupForm() {
         <Label>Company Name</Label>
         <Input
           type="text"
-          placeholder="Company Name"
+          placeholder="Your Company Name"
           value={company}
           onChange={(e) => setCompany(e.target.value)}
           required
@@ -96,11 +131,12 @@ export default function SignupForm() {
       <div>
         <Label>Phone Number</Label>
         <div className="flex items-center space-x-2">
-          {/* Country Code */}
+
+          {/* Country Code Dropdown */}
           <select
             value={countryCode}
             onChange={(e) => setCountryCode(e.target.value)}
-            className="border border-gray-300 rounded-md px-3 py-2 bg-white focus:ring-[#A855F7] focus:outline-none"
+            className="border border-gray-300 rounded-md px-3 py-2 bg-white focus:ring-[#A855F7]"
           >
             {Object.entries(COUNTRY_CODES).map(([country, code]) => (
               <option key={country} value={code}>
@@ -109,14 +145,14 @@ export default function SignupForm() {
             ))}
           </select>
 
-          {/* Phone Input */}
+          {/* Phone input */}
           <Input
             type="tel"
-            placeholder="1234567890"
+            placeholder="9876543210"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             required
-            className="border-gray-300 focus:ring-[#A855F7] flex-1"
+            className="flex-1 focus:ring-[#A855F7]"
           />
         </div>
 
@@ -135,7 +171,6 @@ export default function SignupForm() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-
         {!emailValid && email.length > 0 && (
           <p className="text-red-600 text-xs mt-1">
             Enter a valid email address.
@@ -152,11 +187,8 @@ export default function SignupForm() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            minLength={6}
-            required
             className="pr-10"
           />
-
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
@@ -176,11 +208,8 @@ export default function SignupForm() {
             placeholder="Confirm Password"
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
-            minLength={6}
-            required
             className="pr-10"
           />
-
           <button
             type="button"
             onClick={() => setShowConfirm(!showConfirm)}
@@ -201,12 +230,16 @@ export default function SignupForm() {
         )}
       </div>
 
+      {/* Error Message */}
+      {error && <p className="text-red-600 text-sm">{error}</p>}
+
       {/* Submit Button */}
       <button
         type="submit"
-        disabled={!formValid}
-        className="w-full py-2 bg-[#A855F7] text-white rounded-lg hover:bg-[#9333EA] transition-all">
-        Create Account
+        disabled={!formValid || loading}
+        className="w-full py-2 bg-[#A855F7] text-white rounded-lg hover:bg-[#9333EA] disabled:opacity-60 transition-all"
+      >
+        {loading ? "Creating account..." : "Create Account"}
       </button>
     </form>
   );
