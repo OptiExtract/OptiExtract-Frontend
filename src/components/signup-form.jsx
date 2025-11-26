@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "@/lib/api";               // Shared API instance
+import { toast } from "sonner";           // Sonner toast
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
@@ -29,46 +30,42 @@ export default function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Auto detect country code
+  // Auto-detect country code
   useEffect(() => {
     async function detectCountry() {
       try {
         const res = await fetch("https://ipapi.co/json/");
         const data = await res.json();
-        const country = data.country;
-
-        if (COUNTRY_CODES[country]) {
-          setCountryCode(COUNTRY_CODES[country]);
+        if (COUNTRY_CODES[data.country]) {
+          setCountryCode(COUNTRY_CODES[data.country]);
         }
       } catch (err) {
-        console.log("Location detection failed:", err);
+        console.log("Country detection failed:", err);
       }
     }
     detectCountry();
   }, []);
 
-  // Validations
-  const passwordsMatch = password && confirm && password === confirm;
+  // Validation
   const emailValid = email.includes("@") && email.includes(".");
-  const phoneValid = phone.length >= 10;
+  const phoneValid = phone.length >= 8;
+  const passwordsMatch = password && confirm && password === confirm;
 
   const formValid =
     name.trim().length > 2 &&
     company.trim().length > 2 &&
-    emailValid &&
     phoneValid &&
+    emailValid &&
     password.length >= 6 &&
     passwordsMatch;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
 
     if (!formValid) {
-      setError("Please fix the highlighted fields.");
+      toast.error("Please fix the highlighted fields.");
       return;
     }
 
@@ -82,19 +79,11 @@ export default function SignupForm() {
 
     try {
       setLoading(true);
-
-      const res = await axios.post(
-        "http://localhost:8000/api/v1/auth/register",
-        payload,
-        { headers: { "Content-Type": "application/json" } }
-      );
-
-      console.log("Signup success:", res.data);
-      alert("Account created successfully!");
-
+      const res = await api.post("/auth/register", payload);
+      toast.success("Account created successfully!");
     } catch (err) {
+      toast.error("Signup failed. Please try again.");
       console.error(err);
-      setError("Signup failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -120,7 +109,7 @@ export default function SignupForm() {
         <Label>Company Name</Label>
         <Input
           type="text"
-          placeholder="Your Company Name"
+          placeholder="Your Company"
           value={company}
           onChange={(e) => setCompany(e.target.value)}
           required
@@ -130,9 +119,9 @@ export default function SignupForm() {
       {/* Phone Number */}
       <div>
         <Label>Phone Number</Label>
-        <div className="flex items-center space-x-2">
 
-          {/* Country Code Dropdown */}
+        <div className="flex items-center space-x-2">
+          {/* Country Code */}
           <select
             value={countryCode}
             onChange={(e) => setCountryCode(e.target.value)}
@@ -145,10 +134,10 @@ export default function SignupForm() {
             ))}
           </select>
 
-          {/* Phone input */}
+          {/* Phone Input */}
           <Input
             type="tel"
-            placeholder="9876543210"
+            placeholder="99999 99999"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             required
@@ -172,9 +161,7 @@ export default function SignupForm() {
           required
         />
         {!emailValid && email.length > 0 && (
-          <p className="text-red-600 text-xs mt-1">
-            Enter a valid email address.
-          </p>
+          <p className="text-red-600 text-xs mt-1">Enter a valid email address</p>
         )}
       </div>
 
@@ -188,6 +175,7 @@ export default function SignupForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="pr-10"
+            required
           />
           <button
             type="button"
@@ -209,6 +197,7 @@ export default function SignupForm() {
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             className="pr-10"
+            required
           />
           <button
             type="button"
@@ -230,9 +219,6 @@ export default function SignupForm() {
         )}
       </div>
 
-      {/* Error Message */}
-      {error && <p className="text-red-600 text-sm">{error}</p>}
-
       {/* Submit Button */}
       <button
         type="submit"
@@ -241,6 +227,7 @@ export default function SignupForm() {
       >
         {loading ? "Creating account..." : "Create Account"}
       </button>
+
     </form>
   );
 }
