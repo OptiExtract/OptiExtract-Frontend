@@ -1,43 +1,79 @@
 import React, { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Eye, EyeOff } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import api from "@/lib/api";
 
 export default function LoginForm() {
-  const [showPassword, setShowPassword] = useState(false);
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      setLoading(true);
+
+      const res = await api.post("/auth/login", {
+        email: form.email,
+        password: form.password,
+      });
+
+      const token = res.data?.access_token;
+      if (!token) return toast.error("Invalid response from server");
+
+      localStorage.setItem("token", token);
+      toast.success("Login successful!");
+
+      window.location.href = "/dashboard";
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="space-y-4">
-
-      {/* Email */}
+    <form className="space-y-4" onSubmit={handleLogin}>
       <div>
-        <Label className="text-gray-700">Email</Label>
+        <Label>Email</Label>
         <Input
+          name="email"
           type="email"
-          placeholder="Email"
-          className="mt-1 border-gray-300 focus:ring-[#A855F7]"
+          value={form.email}
+          onChange={handleChange}
+          required
         />
       </div>
 
-      {/* Password */}
       <div>
-        <Label className="text-gray-700">Password</Label>
-        <div className="relative flex items-center">
-          <Input
-            type={showPassword ? "text" : "password"}
-            placeholder="Password"
-            className="mt-1 pr-10 border-gray-300 focus:ring-[#A855F7]"
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 text-gray-500"
-          >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
-        </div>
+        <Label>Password</Label>
+        <Input
+          name="password"
+          type="password"
+          value={form.password}
+          onChange={handleChange}
+          required
+        />
       </div>
 
-    </div>
+      <div className="flex justify-end -mt-2">
+        <button type="button" className="text-sm text-gray-600 hover:text-black">
+          Forgot Password?
+        </button>
+      </div>
+
+      {/* Only ONE button now */}
+      <button
+        className="w-full py-2 bg-[#A855F7] text-white rounded-lg hover:bg-[#9333EA] transition"
+        disabled={loading}
+      >
+        {loading ? "Signing in..." : "Sign in"}
+      </button>
+    </form>
   );
 }
