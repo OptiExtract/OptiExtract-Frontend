@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
 
 /* Public pages */
-import HomePage from "./pages/home";
+import HomePage from "./pages/home.jsx";
 import LoginPage from "./pages/login_page.jsx";
 import SignupPage from "./pages/signup.jsx";
 
