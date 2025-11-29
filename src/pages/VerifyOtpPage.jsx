@@ -1,14 +1,17 @@
-// src/pages/auth/VerifyOtpPage.jsx
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import api from "@/lib/api";
 import { toast } from "sonner";
 
 export default function VerifyOtpPage() {
-  const [otp, setOtp] = useState("");
+  const navigate = useNavigate();
   const [params] = useSearchParams();
+
   const email = params.get("email");
+  const type = params.get("type"); // "signup" or "reset"
+
+  const [otp, setOtp] = useState("");
 
   const handleVerify = async (e) => {
     e.preventDefault();
@@ -16,9 +19,16 @@ export default function VerifyOtpPage() {
     try {
       await api.post("/api/v1/auth/email/verify", { email, otp });
 
-      toast.success("OTP verified!");
+      toast.success("OTP Verified Successfully!");
 
-      window.location.href = `/auth/reset-password?email=${email}`;
+      if (type === "signup") {
+        // After signup verification → login page
+        navigate("/auth/login");
+      } else {
+        // After forgot-password verification → go to reset password
+        navigate(`/auth/reset-password?email=${email}`);
+      }
+
     } catch (err) {
       toast.error(err.response?.data?.message || "Invalid OTP");
     }
@@ -27,9 +37,7 @@ export default function VerifyOtpPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#fafafa] px-4">
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow">
-        <h2 className="text-2xl font-semibold text-center mb-4">
-          Verify OTP
-        </h2>
+        <h2 className="text-2xl font-semibold text-center mb-4">Verify OTP</h2>
         <p className="text-sm text-gray-500 text-center mb-6">
           Enter the OTP sent to <b>{email}</b>
         </p>
