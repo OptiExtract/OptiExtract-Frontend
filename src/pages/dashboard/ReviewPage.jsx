@@ -2,37 +2,29 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import BoundingBoxViewer from "@/components/BoundingBoxViewer";
 
-export default function ReviewPage() {
+export default function ReviewDashboard() {
   const location = useLocation();
-  const { extracted, ocr } = location.state || {};
+  const data = location.state;
 
   const imageUrl =
-    ocr?.image_url ||
-    extracted?.annotated_file_path ||
-    "/placeholder-doc.png";
+    data?.ocr?.image_url || data?.annotated_file_path || "/placeholder-doc.png";
 
   const boxes =
-    ocr?.boxes?.map((b, index) => ({
-      id: index,
+    data?.ocr?.boxes?.map((b, i) => ({
+      id: i,
       text: b.text,
       confidence: b.confidence,
-      box: b.box,
-    })) || ocr || [];
+      box: b.box, // [x_min, y_min, x_max, y_max]
+    })) || [];
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-4">Review Document</h1>
+      <h1 className="text-2xl font-semibold mb-3">Review Extracted Data</h1>
 
-      <div className="mb-4 text-sm text-gray-600">
-        <p>
-          Fill rate:{" "}
-          <b>{((extracted?.fill_rate || 0) * 100).toFixed(1)}%</b>
-        </p>
-        <p>
-          Confidence:{" "}
-          <b>{((extracted?.confidence_score || 0) * 100).toFixed(1)}%</b>
-        </p>
-      </div>
+      <p className="text-gray-700 text-sm mb-4">
+        Fill rate: <b>{(data?.fill_rate * 100).toFixed(1)}%</b> |
+        Confidence: <b>{(data?.confidence_score * 100).toFixed(1)}%</b>
+      </p>
 
       <BoundingBoxViewer imageUrl={imageUrl} boxes={boxes} />
     </div>

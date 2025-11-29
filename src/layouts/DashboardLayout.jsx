@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Upload,
@@ -15,15 +15,17 @@ import { AuthContext } from "@/context/AuthContext";
 import logo from "/optiextract-logo.png";
 
 export default function DashboardLayout() {
+  const { user, loading } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { user, loading } = useContext(AuthContext);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Redirect only after context finishes checking
+  // Wait until AuthContext loads
   useEffect(() => {
-    if (!loading && !user) navigate("/auth/login");
+    if (!loading && !user) {
+      navigate("/auth/login");
+    }
   }, [loading, user, navigate]);
 
   if (loading) {
@@ -54,7 +56,7 @@ export default function DashboardLayout() {
   return (
     <div className="flex min-h-screen bg-gray-100 font-lexend">
 
-      {/* Mobile navbar */}
+      {/* Mobile Navbar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 bg-white shadow p-4 flex items-center justify-between z-50">
         <button onClick={() => setMobileOpen(true)}>
           <Menu size={28} />
@@ -66,7 +68,7 @@ export default function DashboardLayout() {
       <aside
         className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg border-r z-40 
           transition-all duration-300
-          ${mobileOpen ? "translate-x-0" : "-translate-x-full"} 
+          ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0`}
       >
         <button
@@ -110,17 +112,15 @@ export default function DashboardLayout() {
         </div>
       </aside>
 
-      {/* Mobile overlay */}
+      {/* Overlay for mobile */}
       {mobileOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-40 z-30 lg:hidden"
           onClick={() => setMobileOpen(false)}
-        ></div>
+        />
       )}
 
-      {/* Main content */}
       <div className="flex-1 lg:ml-64">
-        {/* Header */}
         <header className="hidden lg:flex h-16 bg-white shadow items-center justify-between px-6">
           <h2 className="text-xl font-semibold capitalize">
             {location.pathname.replace("/dashboard/", "") || "Dashboard"}
@@ -132,7 +132,6 @@ export default function DashboardLayout() {
           </div>
         </header>
 
-        {/* Children */}
         <main className="p-6 mt-20 lg:mt-0">
           <Outlet />
         </main>

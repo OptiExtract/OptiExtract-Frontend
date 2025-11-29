@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import api from "@/lib/api";
 
 export const AuthContext = createContext(null);
@@ -7,13 +7,20 @@ export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch logged-in user
   const fetchUser = async () => {
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
       const res = await api.get("/api/v1/auth/me");
-      setUser(res.data);  // User object
+      setUser(res.data);
     } catch (err) {
-      setUser(null);      // Not logged in
+      console.error("Auth error:", err);
+      setUser(null);
     } finally {
       setLoading(false);
     }

@@ -1,69 +1,149 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { AuthContext } from "@/context/AuthContext";
 import api from "@/lib/api";
 import { toast } from "sonner";
-import { AuthContext } from "@/context/AuthContext";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 
 export default function SettingsPage() {
-  const { user, fetchUser } = useContext(AuthContext);
-  const [form, setForm] = useState({});
+  const { user } = useContext(AuthContext);
+  const [profile, setProfile] = useState(null);
+  const [saving, setSaving] = useState(false);
+
+  // Local UI-only states (not saved to backend)
+  const [notifications, setNotifications] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      setForm({
-        first_name: user.first_name,
-        last_name: user.last_name,
-        phone_number: user.phone_number,
-        company_name: user.company_name,
-      });
-    }
+    if (!user) return;
+
+    const loadUser = async () => {
+      try {
+        const res = await api.get(`/api/v1/users/${user.id}`);
+        setProfile(res.data);
+      } catch (err) {
+        toast.error("Failed to load settings");
+      }
+    };
+
+    loadUser();
   }, [user]);
 
-  const handleSave = async () => {
+  const saveSettings = async (e) => {
+    e.preventDefault();
+    if (!profile) return;
+
+    setSaving(true);
+
     try {
-      await api.put(`/users/${user.id}`, form);
-      toast.success("Profile updated!");
-      fetchUser();
+      // ONLY send updatable fields (backend requirement)
+      const payload = {
+        first_name: profile.first_name,
+        last_name: profile.last_name,
+        phone_number: profile.phone_number,
+        company_name: profile.company_name,
+      };
+
+      await api.put(`/api/v1/users/${user.id}`, payload);
+
+      toast.success("Settings updated!");
     } catch (err) {
-      toast.error("Update failed");
+      toast.error(err.response?.data?.message || "Failed to update settings");
+    } finally {
+      setSaving(false);
     }
   };
 
-  return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Settings</h1>
+  if (!profile) return <p className="p-6">Loading settings...</p>;
 
-      <div className="p-6 bg-white rounded-xl shadow space-y-4">
-        <Input
-          placeholder="First Name"
-          value={form.first_name || ""}
-          onChange={(e) => setForm({ ...form, first_name: e.target.value })}
-        />
-        <Input
-          placeholder="Last Name"
-          value={form.last_name || ""}
-          onChange={(e) => setForm({ ...form, last_name: e.target.value })}
-        />
-        <Input
-          placeholder="Phone Number"
-          value={form.phone_number || ""}
-          onChange={(e) => setForm({ ...form, phone_number: e.target.value })}
-        />
-        <Input
-          placeholder="Company Name"
-          value={form.company_name || ""}
-          onChange={(e) =>
-            setForm({ ...form, company_name: e.target.value })
-          }
-        />
+  return (
+    <div className="max-w-2xl mx-auto bg-white shadow p-6 rounded-xl">
+      <h2 className="text-2xl font-semibold mb-6">Settings</h2>
+
+      <form onSubmit={saveSettings} className="space-y-8">
+
+        {/* Notifications */}
+        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+          <div>
+            <h4 className="font-medium">Notifications</h4>
+            <p className="text-sm text-gray-500">
+              Receive email & dashboard alerts
+            </p>
+          </div>
+          <Switch
+            checked={notifications}
+            onCheckedChange={setNotifications}
+          />
+        </div>
+
+        {/* Dark Mode */}
+        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+          <div>
+            <h4 className="font-medium">Dark Mode</h4>
+            <p className="text-sm text-gray-500">Toggle UI appearance</p>
+          </div>
+          <Switch checked={darkMode} onCheckedChange={setDarkMode} />
+        </div>
+
+        {/* Account */}
+        <div className="space-y-4">
+          <h3 className="font-semibold text-lg">Account Settings</h3>
+
+          {/* Email - read only */}
+          <div>
+            <label>Email</label>
+            <Input value={profile.email} disabled className="bg-gray-100" />
+          </div>
+
+          <div>
+            <label>First Name</label>
+            <Input
+              value={profile.first_name || ""}
+              onChange={(e) =>
+                setProfile({ ...profile, first_name: e.target.value })
+              }
+            />
+          </div>
+
+          <div>
+            <label>Last Name</label>
+            <Input
+              value={profile.last_name || ""}
+              onChange={(e) =>
+                setProfile({ ...profile, last_name: e.target.value })
+              }
+            />
+          </div>
+
+          <div>
+            <label>Phone Number</label>
+            <Input
+              value={profile.phone_number || ""}
+              onChange={(e) =>
+                setProfile({ ...profile, phone_number: e.target.value })
+              }
+            />
+          </div>
+
+          <div>
+            <label>Company Name</label>
+            <Input
+              value={profile.company_name || ""}
+              onChange={(e) =>
+                setProfile({ ...profile, company_name: e.target.value })
+              }
+            />
+          </div>
+        </div>
 
         <button
-          onClick={handleSave}
-          className="px-6 py-3 bg-purple-600 text-white rounded-lg"
+          type="submit"
+          disabled={saving}
+          className="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700"
         >
-          Save Changes
+          {saving ? "Saving..." : "Save Settings"}
         </button>
-      </div>
+      </form>
     </div>
   );
 }
