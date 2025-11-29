@@ -4,27 +4,26 @@ import { Toaster } from "sonner";
 
 /* Public pages */
 import HomePage from "./pages/home";
-import LoginPage from "./pages/login_page";
-import SignupPage from "./pages/signup";
+import LoginPage from "./pages/login_page.jsx";
+import SignupPage from "./pages/signup.jsx";
 
 /* Auth – Password flow */
-import ForgotPasswordPage from "./pages/ForgotPassword";
-import VerifyOtpPage from "./pages/VerifyOtpPage";
-import ResetPasswordPage from "./pages/ResetPassword";
+import ForgotPasswordPage from "./pages/ForgotPassword.jsx";
+import VerifyOtpPage from "./pages/VerifyOtpPage.jsx";
+import ResetPasswordPage from "./pages/ResetPasswordPage.jsx"; // ✅ FIXED
 
 /* Dashboard Layout */
-import DashboardLayout from "./layouts/DashboardLayout";
+import DashboardLayout from "./layouts/DashboardLayout.jsx";
 
 /* Dashboard pages */
-import DashboardHome from "./pages/dashboard/DashboardHome";
-import UploadPage from "./pages/dashboard/UploadPage";
-import AddTypePage from "./pages/dashboard/AddTypePage";
-import DocumentsPage from "./pages/dashboard/DocumentsPage";
-import InsightsPage from "./pages/dashboard/InsightsPage";
-import ProfilePage from "./pages/dashboard/ProfilePage";
-import SettingsPage from "./pages/dashboard/SettingsPage";
-import ReviewDashboard from "./pages/dashboard/ReviewDashboard";
-
+import DashboardHome from "./pages/dashboard/DashboardHome.jsx";
+import UploadPage from "./pages/dashboard/UploadPage.jsx";
+import AddTypePage from "./pages/dashboard/AddTypePage..jsx";
+import DocumentsPage from "./pages/dashboard/DocumentsPage.jsx";
+import InsightsPage from "./pages/dashboard/InsightsPage.jsx";
+import ProfilePage from "./pages/dashboard/ProfilePage.jsx";
+import SettingsPage from "./pages/dashboard/SettingsPage.jsx";
+import ReviewDashboard from "./pages/dashboard/ReviewDashboard.jsx";
 
 export default function App() {
   return (
@@ -43,7 +42,7 @@ export default function App() {
         <Route path="/auth/verify-otp" element={<VerifyOtpPage />} />
         <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
 
-        {/* DASHBOARD (Protected – AuthContext handles redirect) */}
+        {/* DASHBOARD */}
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<DashboardHome />} />
           <Route path="upload" element={<UploadPage />} />
