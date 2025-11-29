@@ -1,3 +1,4 @@
+// src/pages/auth/ResetPasswordPage.jsx
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -6,11 +7,11 @@ import { useSearchParams } from "react-router-dom";
 
 export default function ResetPasswordPage() {
   const [params] = useSearchParams();
-  const token = params.get("token");
+  const email = params.get("email");
 
   const [form, setForm] = useState({
     new_password: "",
-    confirm_password: ""
+    confirm_password: "",
   });
 
   const handleSubmit = async (e) => {
@@ -22,7 +23,7 @@ export default function ResetPasswordPage() {
 
     try {
       await api.post("/api/v1/auth/password/reset", {
-        token,
+        token: email, // until backend sends real token
         new_password: form.new_password,
       });
 

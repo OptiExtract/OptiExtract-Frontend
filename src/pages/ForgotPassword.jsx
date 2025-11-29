@@ -1,7 +1,8 @@
+// src/pages/auth/ForgotPasswordPage.jsx
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
 import api from "@/lib/api";
+import { toast } from "sonner";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -14,7 +15,6 @@ export default function ForgotPasswordPage() {
 
       toast.success("Reset email sent! Check your inbox.");
 
-      // OTP verify page (email sent in query)
       window.location.href = `/auth/verify-otp?email=${email}`;
     } catch (err) {
       toast.error(err.response?.data?.message || "Something went wrong");

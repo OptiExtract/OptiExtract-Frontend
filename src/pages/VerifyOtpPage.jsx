@@ -1,3 +1,4 @@
+// src/pages/auth/VerifyOtpPage.jsx
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { useSearchParams } from "react-router-dom";
@@ -17,7 +18,6 @@ export default function VerifyOtpPage() {
 
       toast.success("OTP verified!");
 
-      // Redirect to reset password WITH token coming later from email
       window.location.href = `/auth/reset-password?email=${email}`;
     } catch (err) {
       toast.error(err.response?.data?.message || "Invalid OTP");
@@ -27,7 +27,9 @@ export default function VerifyOtpPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#fafafa] px-4">
       <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow">
-        <h2 className="text-2xl font-semibold text-center mb-4">Verify OTP</h2>
+        <h2 className="text-2xl font-semibold text-center mb-4">
+          Verify OTP
+        </h2>
         <p className="text-sm text-gray-500 text-center mb-6">
           Enter the OTP sent to <b>{email}</b>
         </p>

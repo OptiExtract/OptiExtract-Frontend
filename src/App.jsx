@@ -1,20 +1,21 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
 
-// Public pages
+/* Public pages */
 import HomePage from "./pages/home";
 import LoginPage from "./pages/login_page";
 import SignupPage from "./pages/signup";
-import ForgotPassword from "./pages/ForgotPassword";
+
+/* Auth – Password flow */
+import ForgotPasswordPage from "./pages/ForgotPassword";
 import VerifyOtpPage from "./pages/VerifyOtpPage";
-import ResetPassword from "./pages/ResetPassword";
+import ResetPasswordPage from "./pages/ResetPassword";
 
-
-// Dashboard layout
+/* Dashboard Layout */
 import DashboardLayout from "./layouts/DashboardLayout";
 
-// Dashboard pages
+/* Dashboard pages */
 import DashboardHome from "./pages/dashboard/DashboardHome";
 import UploadPage from "./pages/dashboard/UploadPage";
 import AddTypePage from "./pages/dashboard/AddTypePage";
@@ -24,29 +25,25 @@ import ProfilePage from "./pages/dashboard/ProfilePage";
 import SettingsPage from "./pages/dashboard/SettingsPage";
 import ReviewDashboard from "./pages/dashboard/ReviewDashboard";
 
+
 export default function App() {
   return (
     <>
-      {/* Global toast notifications */}
       <Toaster position="top-center" richColors closeButton />
 
       <Routes>
 
-        {/* 🔥 Redirect root to dashboard */}
-        <Route path="/" element={<Navigate to="/home" replace />} />
-
-        {/* Optional Home Page */}
-        <Route path="/home" element={<HomePage />} />
-
-        {/* Auth routes */}
+        {/* PUBLIC ROUTES */}
+        <Route path="/" element={<HomePage />} />
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/auth/signup" element={<SignupPage />} />
-        <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+
+        {/* FORGOT / OTP / RESET */}
+        <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/auth/verify-otp" element={<VerifyOtpPage />} />
-        <Route path="/auth/reset-password" element={<ResetPassword />} />
+        <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
 
-
-        {/* Dashboard routes */}
+        {/* DASHBOARD (Protected – AuthContext handles redirect) */}
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<DashboardHome />} />
           <Route path="upload" element={<UploadPage />} />
@@ -55,10 +52,10 @@ export default function App() {
           <Route path="insights" element={<InsightsPage />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="settings" element={<SettingsPage />} />
-          <Route path="review/:documentId" element={<ReviewDashboard />} />
+          <Route path="review" element={<ReviewDashboard />} />
         </Route>
 
-        {/* 404 Page */}
+        {/* 404 */}
         <Route path="*" element={<div>Page not found</div>} />
       </Routes>
     </>
