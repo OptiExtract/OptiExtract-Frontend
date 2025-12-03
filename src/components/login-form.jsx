@@ -18,7 +18,8 @@ export default function LoginForm() {
     try {
       setLoading(true);
 
-      const res = await api.post("/auth/login", {
+      // ✅ FIXED ENDPOINT
+      const res = await api.post("/api/v1/auth/login", {
         email: form.email,
         password: form.password,
       });
@@ -67,7 +68,6 @@ export default function LoginForm() {
         </button>
       </div>
 
-      {/* Only ONE button now */}
       <button
         className="w-full py-2 bg-[#A855F7] text-white rounded-lg hover:bg-[#9333EA] transition"
         disabled={loading}

@@ -36,7 +36,6 @@ export default function SignupForm() {
     if (!formValid) return;
 
     try {
-      // Split name correctly
       const [first, ...rest] = name.trim().split(" ");
       const last = rest.join(" ") || "";
 
@@ -47,14 +46,12 @@ export default function SignupForm() {
         first_name: first,
         last_name: last,
         phone_number: phone,
-        company_name: company
+        company_name: company,
       });
 
       toast.success("Account created! OTP sent to your email.");
 
-      // Redirect to OTP
       navigate(`/auth/verify-otp?email=${email}&type=signup`);
-
     } catch (err) {
       toast.error(err.response?.data?.message || "Signup failed");
     }
@@ -62,8 +59,102 @@ export default function SignupForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5 font-lexend">
-      {/* SAME UI AS BEFORE, unchanged */}
-      ...
+
+      {/* Full Name */}
+      <div className="space-y-1">
+        <Label>Full Name</Label>
+        <Input
+          placeholder="John Doe"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+      </div>
+
+      {/* Company */}
+      <div className="space-y-1">
+        <Label>Company Name</Label>
+        <Input
+          placeholder="Company Pvt Ltd"
+          value={company}
+          onChange={(e) => setCompany(e.target.value)}
+        />
+      </div>
+
+      {/* Phone */}
+      <div className="space-y-1">
+        <Label>Phone Number</Label>
+        <Input
+          type="number"
+          placeholder="99999 99999"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+        />
+        {!phoneValid && phone.length > 0 && (
+          <p className="text-red-500 text-xs">Phone must be at least 10 digits</p>
+        )}
+      </div>
+
+      {/* Email */}
+      <div className="space-y-1">
+        <Label>Email</Label>
+        <Input
+          type="email"
+          placeholder="example@gmail.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        {!emailValid && email.length > 0 && (
+          <p className="text-red-500 text-xs">Enter a valid email</p>
+        )}
+      </div>
+
+      {/* Password */}
+      <div className="space-y-1 relative">
+        <Label>Password</Label>
+        <Input
+          type={showPassword ? "text" : "password"}
+          placeholder="******"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <div
+          className="absolute right-3 top-8 cursor-pointer"
+          onClick={() => setShowPassword(!showPassword)}
+        >
+          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+        </div>
+      </div>
+
+      {/* Confirm Password */}
+      <div className="space-y-1 relative">
+        <Label>Confirm Password</Label>
+        <Input
+          type={showConfirm ? "text" : "password"}
+          placeholder="******"
+          value={confirm}
+          onChange={(e) => setConfirm(e.target.value)}
+        />
+        <div
+          className="absolute right-3 top-8 cursor-pointer"
+          onClick={() => setShowConfirm(!showConfirm)}
+        >
+          {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+        </div>
+
+        {confirm.length > 0 && !passwordsMatch && (
+          <p className="text-red-500 text-xs">Passwords do not match</p>
+        )}
+      </div>
+
+      {/* Submit */}
+      <button
+        type="submit"
+        disabled={!formValid}
+        className={`w-full py-2 rounded-lg text-white bg-[#A855F7] transition 
+        ${!formValid && "opacity-50 cursor-not-allowed"}`}
+      >
+        Create Account
+      </button>
     </form>
   );
 }

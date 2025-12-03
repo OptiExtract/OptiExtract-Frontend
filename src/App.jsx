@@ -10,7 +10,7 @@ import SignupPage from "./pages/signup.jsx";
 /* Auth – Password flow */
 import ForgotPasswordPage from "./pages/ForgotPassword.jsx";
 import VerifyOtpPage from "./pages/VerifyOtpPage.jsx";
-import ResetPasswordPage from "./pages/ResetPasswordPage.jsx"; // ✅ FIXED
+import ResetPasswordPage from "./pages/ResetPassword.jsx"; // ✅ FIXED
 
 /* Dashboard Layout */
 import DashboardLayout from "./layouts/DashboardLayout.jsx";
@@ -18,7 +18,7 @@ import DashboardLayout from "./layouts/DashboardLayout.jsx";
 /* Dashboard pages */
 import DashboardHome from "./pages/dashboard/DashboardHome.jsx";
 import UploadPage from "./pages/dashboard/UploadPage.jsx";
-import AddTypePage from "./pages/dashboard/AddTypePage..jsx";
+import AddTypePage from "./pages/dashboard/AddTypePage.jsx";
 import DocumentsPage from "./pages/dashboard/DocumentsPage.jsx";
 import InsightsPage from "./pages/dashboard/InsightsPage.jsx";
 import ProfilePage from "./pages/dashboard/ProfilePage.jsx";
@@ -33,7 +33,7 @@ export default function App() {
       <Routes>
 
         {/* PUBLIC ROUTES */}
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<HomePage/>} />
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/auth/signup" element={<SignupPage />} />
 

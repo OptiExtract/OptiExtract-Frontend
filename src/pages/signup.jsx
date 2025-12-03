@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import SignupForm from "../components/signup-form";
+import SignupForm from "@/components/signup-form.jsx";
+
 
 export default function SignupPage() {
   return (
@@ -16,16 +17,13 @@ export default function SignupPage() {
           />
         </div>
 
-        {/* Heading */}
         <h2 className="text-2xl font-semibold text-center">Create an account</h2>
         <p className="text-center text-sm text-gray-500 mb-6">
           Enter your information below to create your account.
         </p>
 
-        {/* Form */}
         <SignupForm />
 
-        {/* Login redirect */}
         <div className="text-center mt-4 text-sm text-gray-600">
           Already have an account?{" "}
           <Link to="/auth/login" className="text-[#A855F7] hover:underline">

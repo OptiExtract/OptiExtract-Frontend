@@ -1,37 +1,36 @@
-import React, { createContext, useState, useEffect } from "react";
+import { createContext, useEffect, useState } from "react";
 import api from "@/lib/api";
 
-export const AuthContext = createContext(null);
+export const AuthContext = createContext();
 
-export default function AuthProvider({ children }) {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchUser = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setUser(null);
-        setLoading(false);
-        return;
-      }
-
-      const res = await api.get("/api/v1/auth/me");
-      setUser(res.data);
-    } catch (err) {
-      console.error("Auth error:", err);
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchUser();
+    const token = localStorage.getItem("token");
+    const userId = localStorage.getItem("user_id");
+
+    if (!token || !userId) {
+      setLoading(false);
+      return;
+    }
+
+    api
+      .get(`/api/v1/users/${userId}`)
+      .then((res) => {
+        setUser(res.data);
+      })
+      .catch(() => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user_id");
+        setUser(null);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, setUser }}>
+    <AuthContext.Provider value={{ user, setUser, loading }}>
       {children}
     </AuthContext.Provider>
   );

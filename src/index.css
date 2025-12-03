@@ -1,27 +1,43 @@
+/* ----------------------------------------------------- */
+/* IMPORT FONTS FIRST (REQUIRED BY TAILwind + PostCSS)   */
+/* ----------------------------------------------------- */
+
+@import url("https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@300;400;500;600;700&display=swap");
+
+/* ----------------------------------------------------- */
+/* TAILWIND DIRECTIVES                                   */
+/* ----------------------------------------------------- */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ---------- Light & Dark Theme Color Variables ---------- */
-@layer base {
-  :root {
-  --accent-dark: #733AD1;
-  --accent-mid: #8443E5;
-  --primary: #9C5EF1;
+/* ----------------------------------------------------- */
+/* CUSTOM VARIABLES + THEMES                             */
+/* ----------------------------------------------------- */
+
+:root {
+  --font-lexend: "Lexend Deca", sans-serif;
+
+  /* Light Theme Colors */
+  --accent-dark: #733ad1;
+  --accent-mid: #8443e5;
+  --primary: #9c5ef1;
 
   --neutral-dark: #101828;
-  --neutral-light: #F9FAFB;
+  --neutral-light: #f9fafb;
 
   --background: var(--neutral-light);
   --foreground: var(--neutral-dark);
 }
-  .dark {
+
+/* Dark Mode */
+.dark {
   --background: var(--neutral-dark);
   --foreground: var(--neutral-light);
 }
 
-
-  body {
-    @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
-  }
+/* Body styling */
+body {
+  @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
 }
