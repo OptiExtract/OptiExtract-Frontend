@@ -1,6 +1,5 @@
 // import createApiCall, { POST } from "@/components/api/api";
 import { AuthLayout } from "@/components/auth/AuthLayout";
-import React from "react";
 
 // You have to define the response type according to your API
 // interface LoginResponse {
