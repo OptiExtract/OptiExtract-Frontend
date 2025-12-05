@@ -12,34 +12,27 @@ import {
   Sparkles,
 } from "lucide-react";
 
-const logos = ["NovaPay", "LogiTrack", "FinEdge", "DocuSync", "Flowstack"];
+/** Trusted logos list */
+const logos: string[] = ["NovaPay", "LogiTrack", "FinEdge", "DocuSync", "Flowstack"];
 
-export default function HomePage() {
+const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#050716] text-gray-100 font-lexend flex flex-col">
-      {/* ---------- NAVBAR ---------- */}
+
+      {/* ---------------- NAVBAR ---------------- */}
       <header className="flex items-center justify-between px-6 md:px-12 py-4 border-b border-white/10 sticky top-0 z-40 backdrop-blur-md bg-black/40">
         <div className="flex items-center space-x-2">
           <img src="/optiextract-logo.png" alt="OptiExtract" className="h-9" />
         </div>
 
         <nav className="hidden md:flex items-center space-x-8 text-sm text-gray-300">
-          <a href="#home" className="hover:text-white transition">
-            Home
-          </a>
-          <a href="#about" className="hover:text-white transition">
-            About Us
-          </a>
-          <a href="#contact" className="hover:text-white transition">
-            Contact
-          </a>
+          <a href="#home" className="hover:text-white transition">Home</a>
+          <a href="#about" className="hover:text-white transition">About Us</a>
+          <a href="#contact" className="hover:text-white transition">Contact</a>
         </nav>
 
         <div className="flex items-center space-x-3">
-          <Link
-            to="/auth/login"
-            className="text-sm text-gray-300 hover:text-white"
-          >
+          <Link to="/auth/login" className="text-sm text-gray-300 hover:text-white">
             Login
           </Link>
           <Link
@@ -52,17 +45,15 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* MAIN */}
+      {/* ---------------- MAIN CONTENT ---------------- */}
       <main className="flex-1">
-        {/* ---------- HERO SECTION ---------- */}
-        <section
-          id="home"
-          className="relative px-6 md:px-12 pt-16 md:pt-24 pb-20 overflow-hidden"
-        >
-          {/* moving gradient blobs */}
+
+        {/* ---------------- HERO SECTION ---------------- */}
+        <section id="home" className="relative px-6 md:px-12 pt-16 md:pt-24 pb-20 overflow-hidden">
           <AnimatedBackgroundBlobs />
 
           <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
+
             {/* LEFT SIDE */}
             <div>
               <motion.p
@@ -82,9 +73,7 @@ export default function HomePage() {
                 className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight text-white"
               >
                 Extract data from documents
-                <span className="text-[#A855F7] block">
-                  10× faster with AI.
-                </span>
+                <span className="text-[#A855F7] block">10× faster with AI.</span>
               </motion.h1>
 
               <motion.p
@@ -94,8 +83,7 @@ export default function HomePage() {
                 className="mt-4 text-sm md:text-base text-gray-300 max-w-xl"
               >
                 OptiExtract turns invoices, receipts, contracts and more into
-                clean, structured data. No more manual typing, copy-paste, or
-                missed fields.
+                clean, structured data. No more manual typing or copy-paste.
               </motion.p>
 
               <motion.div
@@ -114,7 +102,7 @@ export default function HomePage() {
 
                 <Link
                   to="/auth/login"
-                  className="px-6 py-3 border border-white/20 text-gray-200 rounded-xl text-sm md:text-base hover:bg-white/5 transition"
+                  className="px-6 py-3 border border-white/20 text-gray-200 rounded-xl hover:bg-white/5 transition"
                 >
                   Go to dashboard
                 </Link>
@@ -130,7 +118,7 @@ export default function HomePage() {
               </motion.p>
             </div>
 
-            {/* RIGHT SIDE – ANIMATED PREVIEW CARD */}
+            {/* RIGHT PREVIEW CARD */}
             <motion.div
               initial={{ opacity: 0, x: 40 }}
               animate={{ opacity: 1, x: 0 }}
@@ -140,7 +128,7 @@ export default function HomePage() {
               <motion.div
                 animate={{ y: [0, -8, 0] }}
                 transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-                className="bg-white/5 border border-white/10 rounded-2xl p-5 md:p-6 shadow-2xl backdrop-blur-xl"
+                className="bg-white/5 border border-white/10 rounded-2xl p-6 shadow-2xl backdrop-blur-xl"
               >
                 <div className="flex justify-between items-center mb-4">
                   <div>
@@ -179,6 +167,7 @@ export default function HomePage() {
             <p className="text-[11px] text-gray-400 uppercase tracking-[0.2em] text-center mb-4">
               Trusted by teams who hate manual data entry
             </p>
+
             <div className="flex flex-wrap justify-center gap-6 text-xs md:text-sm text-gray-300">
               {logos.map((logo, i) => (
                 <div
@@ -192,56 +181,50 @@ export default function HomePage() {
           </motion.div>
         </section>
 
-        {/* ---------- FEATURES SECTION ---------- */}
+        {/* ---------------- FEATURES SECTION ---------------- */}
         <section className="px-6 md:px-12 py-14 border-t border-white/10 bg-[#050716]">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-semibold mb-2">
               Built for document-heavy teams
             </h2>
             <p className="text-sm md:text-base text-gray-400 mb-8 max-w-xl">
-              Finance, operations, legal, and logistics teams use OptiExtract to
-              turn messy PDFs into clean data — without switching tools.
+              Finance, logistics, legal, and operations teams use OptiExtract to
+              convert messy PDFs into structured clean data.
             </p>
 
             <div className="grid md:grid-cols-3 gap-6">
               <FeatureCard
                 icon={<Zap size={24} className="text-[#A855F7]" />}
                 title="Lightning-fast extraction"
-                desc="Upload any PDF, image, or scan and get structured key-value pairs in seconds."
+                desc="Upload any PDF or image and get structured data in seconds."
               />
               <FeatureCard
                 icon={<ScanLine size={24} className="text-[#A855F7]" />}
-                title="Visual review"
-                desc="Review each extracted field with highlights mapped directly on the document."
+                title="Visual Review"
+                desc="Review extracted data with bounding boxes mapped to fields."
               />
               <FeatureCard
                 icon={<Sparkles size={24} className="text-[#A855F7]" />}
-                title="Smart templates"
-                desc="Save templates for recurring documents, so each new upload is faster than the last."
+                title="Smart Templates"
+                desc="Save templates to automate recurring document formats."
               />
             </div>
           </div>
         </section>
 
-        {/* ---------- ABOUT SECTION ---------- */}
-        <section
-          id="about"
-          className="px-6 md:px-12 py-16 border-t border-white/10 bg-[#050716]"
-        >
+        {/* ---------------- ABOUT SECTION ---------------- */}
+        <section id="about" className="px-6 md:px-12 py-16 border-t border-white/10 bg-[#050716]">
           <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
             <div>
               <h2 className="text-2xl md:text-3xl font-semibold mb-3">
                 About OptiExtract
               </h2>
               <p className="text-sm md:text-base text-gray-300 mb-3">
-                OptiExtract is built to kill manual document processing forever.
-                Our goal is simple: give teams a fast, reliable way to extract
-                the data they care about — without touching every line.
+                OptiExtract eliminates manual document processing forever.
               </p>
               <p className="text-sm md:text-base text-gray-400">
-                Whether you&apos;re processing hundreds of invoices or validating
-                contracts, OptiExtract fits into your workflow, not the other way
-                around.
+                Whether processing hundreds of invoices or validating legal files,
+                OptiExtract adapts to your workflow.
               </p>
             </div>
 
@@ -251,33 +234,31 @@ export default function HomePage() {
                 <span className="font-medium text-sm">Teams we empower</span>
               </div>
               <ul className="text-xs md:text-sm text-gray-300 space-y-2">
-                <li>• Finance teams automating invoice processing</li>
-                <li>• Operations teams validating logistics documents</li>
-                <li>• Legal teams reviewing contracts faster</li>
-                <li>• Back-office teams reducing manual admin work</li>
+                <li>• Finance teams — automate invoices</li>
+                <li>• Logistics teams — verify documents</li>
+                <li>• Legal teams — review contracts faster</li>
+                <li>• Operations — eliminate admin work</li>
               </ul>
             </div>
           </div>
         </section>
 
-        {/* ---------- SECURITY SECTION ---------- */}
-        <section
-          id="security"
-          className="px-6 md:px-12 py-16 border-t border-white/10 bg-[#050716]"
-        >
+        {/* ---------------- SECURITY SECTION ---------------- */}
+        <section id="security" className="px-6 md:px-12 py-16 border-t border-white/10 bg-[#050716]">
           <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
+
             <div>
               <h2 className="text-2xl md:text-3xl font-semibold mb-3">
                 Security built in from day one.
               </h2>
               <p className="text-sm md:text-base text-gray-300 mb-4">
-                Your documents are sensitive. OptiExtract is built with
-                security-first principles so you can trust every extraction.
+                Your documents are sensitive. We treat them with enterprise-grade security.
               </p>
+
               <ul className="space-y-2 text-xs md:text-sm text-gray-300 list-disc list-inside">
                 <li>Encrypted in transit and at rest</li>
-                <li>Token-based authenticated access</li>
-                <li>Granular control over documents and fields</li>
+                <li>Authentication via JWT</li>
+                <li>Audit logs for accountability</li>
               </ul>
             </div>
 
@@ -287,27 +268,23 @@ export default function HomePage() {
                 <span className="font-medium text-sm">Security snapshot</span>
               </div>
               <div className="space-y-2 text-xs text-gray-300">
-                <p>• Strict isolation per account</p>
-                <p>• API access controlled via JWT</p>
-                <p>• Logs for traceability and compliance</p>
+                <p>• Strict document isolation</p>
+                <p>• Role-based access</p>
+                <p>• Auto-expiring tokens</p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ---------- CONTACT SECTION ---------- */}
-        <section
-          id="contact"
-          className="px-6 md:px-12 py-16 border-t border-white/10 bg-[#050716]"
-        >
+        {/* ---------------- CONTACT SECTION ---------------- */}
+        <section id="contact" className="px-6 md:px-12 py-16 border-t border-white/10 bg-[#050716]">
           <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10">
+
+            {/* CONTACT TEXT */}
             <div>
-              <h2 className="text-2xl md:text-3xl font-semibold mb-3">
-                Contact Us
-              </h2>
+              <h2 className="text-2xl md:text-3xl font-semibold mb-3">Contact Us</h2>
               <p className="text-sm md:text-base text-gray-300 mb-4">
-                Have questions, need support, or want to explore a custom setup?
-                Reach out to us anytime.
+                Have questions or need support? We’re here to help.
               </p>
 
               <div className="space-y-3 text-sm text-gray-300">
@@ -322,6 +299,7 @@ export default function HomePage() {
               </div>
             </div>
 
+            {/* CONTACT FORM */}
             <form className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4">
               <input
                 type="text"
@@ -334,10 +312,11 @@ export default function HomePage() {
                 className="w-full px-3 py-2 bg-black/20 border border-white/15 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A855F7]"
               />
               <textarea
-                rows="4"
+                rows={4}
                 placeholder="Message"
                 className="w-full px-3 py-2 bg-black/20 border border-white/15 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A855F7]"
               ></textarea>
+
               <button
                 type="submit"
                 className="w-full py-2.5 bg-[#A855F7] text-white rounded-lg text-sm hover:bg-[#9333EA] transition"
@@ -345,45 +324,55 @@ export default function HomePage() {
                 Send Message
               </button>
             </form>
+
           </div>
         </section>
       </main>
 
-      {/* FOOTER */}
+      {/* ---------------- FOOTER ---------------- */}
       <footer className="py-6 border-t border-white/10 text-center text-xs text-gray-500 bg-[#050716]">
         © {new Date().getFullYear()} OptiExtract. All rights reserved.
       </footer>
     </div>
   );
+};
+
+export default HomePage;
+
+/* ------------------------------------ */
+/* --- REUSABLE COMPONENTS (TSX) ------ */
+/* ------------------------------------ */
+
+interface FeatureCardProps {
+  icon: React.ReactNode;
+  title: string;
+  desc: string;
 }
 
-/* ---------- SMALL COMPONENTS ---------- */
+const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, desc }) => (
+  <motion.div
+    whileHover={{ y: -4, scale: 1.02 }}
+    className="p-5 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition"
+  >
+    <div className="mb-3">{icon}</div>
+    <h3 className="text-sm md:text-base font-semibold mb-1">{title}</h3>
+    <p className="text-xs md:text-sm text-gray-300">{desc}</p>
+  </motion.div>
+);
 
-function FeatureCard({ icon, title, desc }) {
-  return (
-    <motion.div
-      whileHover={{ y: -4, scale: 1.02 }}
-      className="p-5 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition"
-    >
-      <div className="mb-3">{icon}</div>
-      <h3 className="text-sm md:text-base font-semibold mb-1">{title}</h3>
-      <p className="text-xs md:text-sm text-gray-300">{desc}</p>
-    </motion.div>
-  );
+interface PreviewFieldProps {
+  label: string;
+  value: string;
 }
 
-function PreviewField({ label, value }) {
-  return (
-    <div className="bg-white/5 rounded-lg px-3 py-2">
-      <p className="text-[10px] text-gray-400 uppercase tracking-wide">
-        {label}
-      </p>
-      <p className="text-xs text-white mt-1 truncate">{value}</p>
-    </div>
-  );
-}
+const PreviewField: React.FC<PreviewFieldProps> = ({ label, value }) => (
+  <div className="bg-white/5 rounded-lg px-3 py-2">
+    <p className="text-[10px] text-gray-400 uppercase tracking-wide">{label}</p>
+    <p className="text-xs text-white mt-1 truncate">{value}</p>
+  </div>
+);
 
-function AnimatedBackgroundBlobs() {
+const AnimatedBackgroundBlobs: React.FC = () => {
   return (
     <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
       <motion.div
@@ -391,11 +380,13 @@ function AnimatedBackgroundBlobs() {
         animate={{ x: [0, 30, 0], y: [0, 20, 0] }}
         transition={{ repeat: Infinity, duration: 14, ease: "easeInOut" }}
       />
+
       <motion.div
         className="absolute top-40 -right-16 w-80 h-80 bg-indigo-500 rounded-full blur-3xl opacity-25"
         animate={{ x: [0, -25, 0], y: [0, -15, 0] }}
         transition={{ repeat: Infinity, duration: 18, ease: "easeInOut" }}
       />
+
       <motion.div
         className="absolute bottom-[-120px] left-1/3 w-72 h-72 bg-emerald-500 rounded-full blur-3xl opacity-10"
         animate={{ x: [0, 15, 0], y: [0, 10, 0] }}
@@ -403,4 +394,4 @@ function AnimatedBackgroundBlobs() {
       />
     </div>
   );
-}
+};

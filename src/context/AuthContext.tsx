@@ -1,9 +1,9 @@
 import { createContext, useEffect, useState } from "react";
 import api from "@/lib/api";
 
-export const AuthContext = createContext();
+export const AuthContext = createContext<any>(null);
 
-export function AuthProvider({ children }) {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -18,9 +18,7 @@ export function AuthProvider({ children }) {
 
     api
       .get(`/api/v1/users/${userId}`)
-      .then((res) => {
-        setUser(res.data);
-      })
+      .then((res) => setUser(res.data))
       .catch(() => {
         localStorage.removeItem("token");
         localStorage.removeItem("user_id");

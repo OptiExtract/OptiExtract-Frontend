@@ -5,16 +5,16 @@ import { UploadCloud, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function UploadPage() {
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [loading, setLoading] = useState(false);
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
 
   const allowedTypes = ["application/pdf", "image/png", "image/jpg", "image/jpeg"];
   const maxSizeMB = 10;
 
-  const validateFile = (uploaded) => {
+  const validateFile = (uploaded: File | undefined) => {
     if (!uploaded) return;
 
     if (!allowedTypes.includes(uploaded.type)) {
@@ -30,43 +30,62 @@ export default function UploadPage() {
     setFile(uploaded);
   };
 
-  const handleFileSelect = (e) => validateFile(e.target.files[0]);
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) =>
+    validateFile(e.target.files?.[0]);
 
-  const handleDrag = (e) => {
+  const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (["dragenter", "dragover"].includes(e.type)) setDragActive(true);
     else if (e.type === "dragleave") setDragActive(false);
   };
 
-  const handleDrop = (e) => {
+  const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setDragActive(false);
-    validateFile(e.dataTransfer.files[0]);
+    validateFile(e.dataTransfer.files?.[0]);
   };
 
   const extractDocument = async () => {
     if (!file) return toast.error("Upload a file first.");
 
-    const formData = new FormData();
-    formData.append("file", file);
-
     try {
       setLoading(true);
 
-      const res = await api.post("/api/v1/extract", formData, {
+      
+      // ---------------------------
+      const fd = new FormData();
+      fd.append("file", file);
+
+      const uploadRes = await api.post("/api/v1/extract", fd, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      const data = res.data;
+      const filePath =
+        uploadRes.data?.original_file_path ||
+        uploadRes.data?.file_path;
 
-      toast.success("Document processed!");
+      if (!filePath) {
+        toast.error("Backend did not return file_path.");
+        return;
+      }
 
-      navigate("/dashboard/review", { state: data });
+      
+      const ocrRes = await api.get(`/api/v1/ocr/extract?file_path=${filePath}`);
 
-    } catch (err) {
+     
+      const validationRes = await api.post(
+        `/api/v1/validation/process?original_file_path=${filePath}`,
+        ocrRes.data // extracted fields
+      );
+
+      // Move data to review page
+      navigate("/dashboard/review", { state: validationRes.data });
+
+      toast.success("Document extracted successfully!");
+    } catch (err: any) {
       console.error(err);
-      toast.error(err.response?.data?.message || "Extraction failed.");
+      toast.error(err.response?.data?.detail || "Extraction failed.");
     } finally {
       setLoading(false);
     }
@@ -84,7 +103,7 @@ export default function UploadPage() {
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
         onDrop={handleDrop}
-        onClick={() => inputRef.current.click()}
+        onClick={() => inputRef.current?.click()}
       >
         {!file ? (
           <div className="flex flex-col items-center gap-3">
@@ -101,9 +120,10 @@ export default function UploadPage() {
             </p>
           </div>
         )}
+
         <input
-          type="file"
           ref={inputRef}
+          type="file"
           hidden
           accept=".pdf,.png,.jpg,.jpeg"
           onChange={handleFileSelect}

@@ -12,16 +12,20 @@ import {
 } from "lucide-react";
 
 import { AuthContext } from "@/context/AuthContext";
-import logo from "/optiextract-logo.png";
 
-export default function DashboardLayout() {
+interface MenuItem {
+  name: string;
+  path: string;
+  icon: React.FC<{ size?: number }>;
+}
+
+const DashboardLayout: React.FC = () => {
   const { user, loading } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
 
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Wait until AuthContext loads
   useEffect(() => {
     if (!loading && !user) {
       navigate("/auth/login");
@@ -38,7 +42,7 @@ export default function DashboardLayout() {
 
   if (!user) return null;
 
-  const menu = [
+  const menu: MenuItem[] = [
     { name: "Dashboard", path: "/dashboard", icon: BarChart3 },
     { name: "Upload File", path: "/dashboard/upload", icon: Upload },
     { name: "Add Document Type", path: "/dashboard/add-type", icon: FilePlus },
@@ -50,26 +54,26 @@ export default function DashboardLayout() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user_id");
     navigate("/auth/login");
   };
 
   return (
     <div className="flex min-h-screen bg-gray-100 font-lexend">
-
-      {/* Mobile Navbar */}
+      {/* MOBILE NAVBAR */}
       <div className="lg:hidden fixed top-0 left-0 right-0 bg-white shadow p-4 flex items-center justify-between z-50">
         <button onClick={() => setMobileOpen(true)}>
           <Menu size={28} />
         </button>
-        <img src={logo} alt="logo" className="h-10" />
+        <img src="/optiextract-logo.png" alt="OptiExtract Logo" className="h-10" />
       </div>
 
-      {/* Sidebar */}
+      {/* SIDEBAR */}
       <aside
-        className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg border-r z-40 
-          transition-all duration-300
-          ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
-          lg:translate-x-0`}
+        className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg border-r z-40
+        transition-all duration-300
+        ${mobileOpen ? "translate-x-0" : "-translate-x-full"}
+        lg:translate-x-0`}
       >
         <button
           className="lg:hidden absolute top-4 right-4 text-gray-600"
@@ -79,20 +83,19 @@ export default function DashboardLayout() {
         </button>
 
         <div className="flex items-center px-4 py-6">
-          <img src={logo} alt="OptiExtract" className="h-12" />
+          <img src="/optiextract-logo.png" alt="OptiExtract" className="h-12" />
         </div>
 
         <nav className="mt-6 px-4 space-y-2">
           {menu.map(({ name, path, icon: Icon }) => {
             const active = location.pathname === path;
-
             return (
               <Link
                 key={name}
                 to={path}
                 onClick={() => setMobileOpen(false)}
                 className={`flex items-center px-4 py-3 rounded-lg transition 
-                  ${active ? "bg-purple-100 text-purple-600" : "hover:bg-gray-100"}`}
+                ${active ? "bg-purple-100 text-purple-600" : "hover:bg-gray-100"}`}
               >
                 <Icon size={20} />
                 <span className="ml-3">{name}</span>
@@ -112,7 +115,7 @@ export default function DashboardLayout() {
         </div>
       </aside>
 
-      {/* Overlay for mobile */}
+      {/* Mobile Overlay */}
       {mobileOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-40 z-30 lg:hidden"
@@ -120,6 +123,7 @@ export default function DashboardLayout() {
         />
       )}
 
+      {/* RIGHT CONTENT */}
       <div className="flex-1 lg:ml-64">
         <header className="hidden lg:flex h-16 bg-white shadow items-center justify-between px-6">
           <h2 className="text-xl font-semibold capitalize">
@@ -138,4 +142,6 @@ export default function DashboardLayout() {
       </div>
     </div>
   );
-}
+};
+
+export default DashboardLayout;

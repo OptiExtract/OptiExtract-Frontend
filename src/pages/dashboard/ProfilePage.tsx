@@ -4,19 +4,33 @@ import { AuthContext } from "@/context/AuthContext";
 import api from "@/lib/api";
 import { toast } from "sonner";
 
-export default function ProfilePage() {
+interface UserProfile {
+  id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  company_name: string;
+  account_association?: string;
+  account_type?: string;
+  is_active?: boolean;
+  is_verified?: boolean;
+  created_at?: string;
+}
+
+const ProfilePage: React.FC = () => {
   const { user, setUser } = useContext(AuthContext);
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user?.id) return;
 
     const fetchProfile = async () => {
       try {
-        const res = await api.get(`/api/v1/users/${user.id}`);
+        const res = await api.get<UserProfile>(`/api/v1/users/${user.id}`);
         setProfile(res.data);
-      } catch (err) {
+      } catch {
         toast.error("Failed to load profile");
       }
     };
@@ -24,23 +38,30 @@ export default function ProfilePage() {
     fetchProfile();
   }, [user]);
 
-  const handleUpdate = async (e) => {
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!profile) return;
+
     setSaving(true);
 
     try {
-      const res = await api.put(`/api/v1/users/${user.id}`, profile);
+      const res = await api.put<UserProfile>(
+        `/api/v1/users/${profile.id}`,
+        profile
+      );
 
-      toast.success("Profile updated!");
       setUser(res.data);
-    } catch (err) {
+      toast.success("Profile updated!");
+    } catch (err: any) {
       toast.error(err.response?.data?.message || "Update failed");
     } finally {
       setSaving(false);
     }
   };
 
-  if (!profile) return <p>Loading profile...</p>;
+  if (!profile) {
+    return <p>Loading profile...</p>;
+  }
 
   return (
     <div className="max-w-xl bg-white shadow p-6 rounded-xl">
@@ -103,4 +124,6 @@ export default function ProfilePage() {
       </form>
     </div>
   );
-}
+};
+
+export default ProfilePage;

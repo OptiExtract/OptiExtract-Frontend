@@ -4,35 +4,41 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import api from "@/lib/api";
 
+interface LoginFormData {
+  email: string;
+  password: string;
+}
+
 export default function LoginForm() {
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState<LoginFormData>({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
       setLoading(true);
 
-      // ✅ FIXED ENDPOINT
       const res = await api.post("/api/v1/auth/login", {
         email: form.email,
         password: form.password,
       });
 
-      const token = res.data?.access_token;
-      if (!token) return toast.error("Invalid response from server");
+      const token: string | undefined = res.data?.access_token;
+      if (!token) {
+        toast.error("Invalid response from server");
+        return;
+      }
 
       localStorage.setItem("token", token);
-      toast.success("Login successful!");
-
+      toast.success("Login successful");
       window.location.href = "/dashboard";
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Login failed");
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
