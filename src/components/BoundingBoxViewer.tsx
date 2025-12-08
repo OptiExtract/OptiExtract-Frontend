@@ -43,7 +43,7 @@ const BoundingBoxViewer: React.FC<Props> = ({ imageUrl, boxes = [] }) => {
     setOffset({ x: 0, y: 0 });
   };
 
-  // PAN LOGIC
+ 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsPanning(true);
@@ -74,7 +74,6 @@ const BoundingBoxViewer: React.FC<Props> = ({ imageUrl, boxes = [] }) => {
 
   return (
     <div className="flex gap-4 w-full">
-      {/* LEFT IMAGE + BOXES */}
       <div className="flex-1">
         <div className="mb-3 flex items-center gap-2">
           <button onClick={handleZoomOut} className="px-2 py-1 border rounded">
@@ -147,7 +146,7 @@ const BoundingBoxViewer: React.FC<Props> = ({ imageUrl, boxes = [] }) => {
         </div>
       </div>
 
-      {/* RIGHT DETAILS PANEL */}
+      
       <div className="w-64 bg-white border p-3 text-sm rounded-lg">
         <h3 className="font-semibold mb-2">Details</h3>
 

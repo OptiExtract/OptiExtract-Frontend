@@ -1,12 +1,11 @@
 /* Import fonts first (must be at top!) */
 @import url("https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@300;400;500;600;700&display=swap");
 
-/* Tailwind layers */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Root theme variables */
 :root {
   --accent-dark: #733ad1;
   --accent-mid: #8443e5;
@@ -19,13 +18,13 @@
   --foreground: var(--neutral-dark);
 }
 
-/* Dark mode */
+
 .dark {
   --background: var(--neutral-dark);
   --foreground: var(--neutral-light);
 }
 
-/* Global body styling */
+
 body {
   @apply bg-[var(--background)] text-[var(--foreground)] font-lexend;
 }

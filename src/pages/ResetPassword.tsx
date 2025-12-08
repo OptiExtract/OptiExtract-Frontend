@@ -23,7 +23,7 @@ export default function ResetPasswordPage() {
 
     try {
       await api.post("/api/v1/auth/password/reset", {
-        token: email, // until backend sends real token
+        token: email, 
         new_password: form.new_password,
       });
 

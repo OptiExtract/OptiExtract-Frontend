@@ -2,38 +2,36 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
 
-/* Public pages */
-import HomePage from "./pages/home.jsx";
-import LoginPage from "./pages/login_page.jsx";
-import SignupPage from "./pages/signup.jsx";
 
-/* Auth – Password flow */
-import ForgotPasswordPage from "./pages/ForgotPassword.jsx";
-import VerifyOtpPage from "./pages/VerifyOtpPage.jsx";
-import ResetPasswordPage from "./pages/ResetPassword.jsx"; // ✅ FIXED
+import HomePage from "./pages/home";
+import LoginPage from "./pages/login_page";
+import SignupPage from "./pages/signup";
 
-/* Dashboard Layout */
-import DashboardLayout from "./layouts/DashboardLayout.jsx";
+import ForgotPasswordPage from "./pages/ForgotPassword";
+import VerifyOtpPage from "./pages/VerifyOtpPage";
+import ResetPasswordPage from "./pages/ResetPassword";
 
-/* Dashboard pages */
-import DashboardHome from "./pages/dashboard/DashboardHome.jsx";
-import UploadPage from "./pages/dashboard/UploadPage.jsx";
-import AddTypePage from "./pages/dashboard/AddTypePage.jsx";
-import DocumentsPage from "./pages/dashboard/DocumentsPage.jsx";
-import InsightsPage from "./pages/dashboard/InsightsPage.jsx";
-import ProfilePage from "./pages/dashboard/ProfilePage.jsx";
-import SettingsPage from "./pages/dashboard/SettingsPage.jsx";
-import ReviewDashboard from "./pages/dashboard/ReviewDashboard.jsx";
 
-export default function App() {
+import DashboardLayout from "./layouts/DashboardLayout";
+
+
+import DashboardHome from "./pages/dashboard/DashboardHome";
+import UploadPage from "./pages/dashboard/UploadPage";
+import AddTypePage from "./pages/dashboard/AddTypePage";
+import DocumentsPage from "./pages/dashboard/DocumentsPage";
+import InsightsPage from "./pages/dashboard/Insightspage";
+import ProfilePage from "./pages/dashboard/ProfilePage";
+import SettingsPage from "./pages/dashboard/SettingsPage";
+import ReviewDashboard from "./pages/dashboard/ReviewDashboard";
+
+const App: React.FC = () => {
   return (
     <>
       <Toaster position="top-center" richColors closeButton />
 
       <Routes>
-
         {/* PUBLIC ROUTES */}
-        <Route path="/" element={<HomePage/>} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/auth/signup" element={<SignupPage />} />
 
@@ -42,7 +40,7 @@ export default function App() {
         <Route path="/auth/verify-otp" element={<VerifyOtpPage />} />
         <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
 
-        {/* DASHBOARD */}
+        {/* DASHBOARD ROUTES */}
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<DashboardHome />} />
           <Route path="upload" element={<UploadPage />} />
@@ -59,4 +57,6 @@ export default function App() {
       </Routes>
     </>
   );
-}
+};
+
+export default App;

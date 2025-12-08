@@ -19,7 +19,7 @@ export default function SignupForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const passwordsMatch = password && confirm && password === confirm;
+  const passwordsMatch = password.length > 0 && confirm.length > 0 && password === confirm;
   const emailValid = email.includes("@") && email.includes(".");
   const phoneValid = phone.length >= 10;
 
@@ -31,7 +31,7 @@ export default function SignupForm() {
     password.length >= 6 &&
     passwordsMatch;
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formValid) return;
 
@@ -49,18 +49,17 @@ export default function SignupForm() {
         company_name: company,
       });
 
-      toast.success("Account created! OTP sent to your email.");
+      toast.success("Account created. OTP sent to your email.");
 
       navigate(`/auth/verify-otp?email=${email}&type=signup`);
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Signup failed");
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Signup failed");
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5 font-lexend">
 
-      {/* Full Name */}
       <div className="space-y-1">
         <Label>Full Name</Label>
         <Input
@@ -70,7 +69,6 @@ export default function SignupForm() {
         />
       </div>
 
-      {/* Company */}
       <div className="space-y-1">
         <Label>Company Name</Label>
         <Input
@@ -80,7 +78,6 @@ export default function SignupForm() {
         />
       </div>
 
-      {/* Phone */}
       <div className="space-y-1">
         <Label>Phone Number</Label>
         <Input
@@ -89,12 +86,11 @@ export default function SignupForm() {
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
         />
-        {!phoneValid && phone.length > 0 && (
+        {phone.length > 0 && !phoneValid && (
           <p className="text-red-500 text-xs">Phone must be at least 10 digits</p>
         )}
       </div>
 
-      {/* Email */}
       <div className="space-y-1">
         <Label>Email</Label>
         <Input
@@ -103,12 +99,11 @@ export default function SignupForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        {!emailValid && email.length > 0 && (
+        {email.length > 0 && !emailValid && (
           <p className="text-red-500 text-xs">Enter a valid email</p>
         )}
       </div>
 
-      {/* Password */}
       <div className="space-y-1 relative">
         <Label>Password</Label>
         <Input
@@ -125,7 +120,6 @@ export default function SignupForm() {
         </div>
       </div>
 
-      {/* Confirm Password */}
       <div className="space-y-1 relative">
         <Label>Confirm Password</Label>
         <Input
@@ -146,12 +140,12 @@ export default function SignupForm() {
         )}
       </div>
 
-      {/* Submit */}
       <button
         type="submit"
         disabled={!formValid}
-        className={`w-full py-2 rounded-lg text-white bg-[#A855F7] transition 
-        ${!formValid && "opacity-50 cursor-not-allowed"}`}
+        className={`w-full py-2 rounded-lg text-white bg-[#A855F7] transition ${
+          !formValid ? "opacity-50 cursor-not-allowed" : ""
+        }`}
       >
         Create Account
       </button>
