@@ -30,17 +30,17 @@ const App: React.FC = () => {
       <Toaster position="top-center" richColors closeButton />
 
       <Routes>
-        {/* PUBLIC ROUTES */}
+        
         <Route path="/" element={<HomePage />} />
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/auth/signup" element={<SignupPage />} />
 
-        {/* FORGOT / OTP / RESET */}
+      
         <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/auth/verify-otp" element={<VerifyOtpPage />} />
         <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
 
-        {/* DASHBOARD ROUTES */}
+       
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<DashboardHome />} />
           <Route path="upload" element={<UploadPage />} />
@@ -52,7 +52,7 @@ const App: React.FC = () => {
           <Route path="review" element={<ReviewDashboard />} />
         </Route>
 
-        {/* 404 */}
+       
         <Route path="*" element={<div>Page not found</div>} />
       </Routes>
     </>
